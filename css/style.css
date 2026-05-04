@@ -1,0 +1,162 @@
+/* AxoLegacy – Gills & Generations */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0a1a2e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  overflow: hidden;
+}
+
+#gameContainer {
+  position: relative;
+  display: inline-block;
+}
+
+#gameCanvas {
+  display: block;
+  border: 3px solid #2d5a8c;
+  border-radius: 8px;
+  cursor: none;
+}
+
+/* ---- OVERLAY SCREENS ---- */
+#overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+#overlay.visible {
+  pointer-events: all;
+}
+
+.screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+  padding: 40px;
+  background: rgba(10, 26, 46, 0.92);
+  border: 2px solid #4a90d9;
+  border-radius: 16px;
+  max-width: 520px;
+  width: 90%;
+}
+
+.screen.active {
+  display: flex;
+}
+
+.screen h1 {
+  font-size: 2.4rem;
+  color: #7ec8e3;
+  text-shadow: 0 0 20px #4a90d9;
+  line-height: 1.2;
+}
+
+.screen h2 {
+  font-size: 1.8rem;
+  color: #ffd700;
+  text-shadow: 0 0 12px #ffa500;
+}
+
+.screen p {
+  color: #c0ddf0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 400px;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+  font-size: 0.88rem;
+  color: #a0c8e0;
+  text-align: left;
+}
+
+.controls-grid span {
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.btn {
+  padding: 14px 36px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #2d5a8c, #1a3a5c);
+  color: #7ec8e3;
+  border: 2px solid #4a90d9;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.05em;
+}
+
+.btn:hover {
+  background: linear-gradient(135deg, #4a90d9, #2d5a8c);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(74, 144, 217, 0.5);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+#scoreDisplay {
+  color: #7ec8e3;
+  font-size: 1rem;
+}
+
+#scoreDisplay span {
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.emoji-big {
+  font-size: 3rem;
+}
+
+/* Event notification toast */
+#eventToast {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 26, 46, 0.9);
+  border: 2px solid #ffa500;
+  border-radius: 10px;
+  padding: 12px 24px;
+  color: #ffd700;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+#eventToast.show {
+  opacity: 1;
+}
