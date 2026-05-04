@@ -56,6 +56,33 @@ const AXOLOTL_COLORS = ['#FFB6C1', '#FFF5E6', '#E8D5FF', '#FFDAB9', '#B0E0E6', '
 const CROWN_COLOR    = '#FFD700';
 const PLAYER_COLOR   = '#FF9EB5';
 
+// ---- SPRITES ----
+// Each entry: pixel dimensions of the PNG, anchor point (ax,ay) = game-origin (0,0)
+// inside the PNG, and nativeS = the 's' factor used when the PNG was rendered.
+// Drop your own PNG files into sprites/ and they will be used automatically.
+const SPRITE_INFO = {
+  axolotl:     { w: 90,  h: 60,  ax: 45,  ay: 35, nativeS: 1.0 },
+  axolotlKing: { w: 120, h: 85,  ax: 55,  ay: 55, nativeS: 1.4 },
+  predator:    { w: 260, h: 130, ax: 155, ay: 75, nativeS: 2.5 },
+};
+
+const SPRITES      = { axolotl: null, axolotlKing: null, predator: null };
+const SPRITE_READY = { axolotl: false, axolotlKing: false, predator: false };
+
+function loadSprites() {
+  const defs = [
+    ['axolotl',     'sprites/axolotl.png'],
+    ['axolotlKing', 'sprites/axolotl_king.png'],
+    ['predator',    'sprites/predator.png'],
+  ];
+  defs.forEach(([key, src]) => {
+    const img    = new Image();
+    img.onload   = () => { SPRITES[key] = img; SPRITE_READY[key] = true; };
+    img.onerror  = () => { SPRITE_READY[key] = false; }; // will use procedural fallback
+    img.src      = src;
+  });
+}
+
 // ---- GAME STATE ----
 let gameState = 'MENU'; // MENU | PLAYING | PAUSED | GAMEOVER
 
@@ -852,6 +879,40 @@ function drawBubbles() {
 // RENDERING – AXOLOTL (shared shape)
 // ============================================================
 function drawAxolotlShape(x, y, size, color, dir, isKing, health, t, alpha) {
+  const spriteKey = isKing ? 'axolotlKing' : 'axolotl';
+
+  // ---- PNG SPRITE PATH (default) ----
+  if (SPRITE_READY[spriteKey] && SPRITES[spriteKey]) {
+    const info        = SPRITE_INFO[spriteKey];
+    const spriteScale = (size / 20) / info.nativeS;
+    const dw = info.w  * spriteScale;
+    const dh = info.h  * spriteScale;
+    const dx = -info.ax * spriteScale;
+    const dy = -info.ay * spriteScale;
+
+    ctx.save();
+    ctx.globalAlpha = alpha ?? 1;
+    ctx.translate(x, y);
+    if (dir < 0) ctx.scale(-1, 1);
+
+    ctx.drawImage(SPRITES[spriteKey], dx, dy, dw, dh);
+
+    // Damage tint: overlay a red wash scaled by missing health
+    const healthRatio = Math.max(0, health / AXO_HEALTH_MAX);
+    if (healthRatio < 1) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'source-atop';
+      ctx.globalAlpha = (1 - healthRatio) * 0.55 * (alpha ?? 1);
+      ctx.fillStyle   = '#FF4444';
+      ctx.fillRect(dx, dy, dw, dh);
+      ctx.restore();
+    }
+
+    ctx.restore();
+    return;
+  }
+
+  // ---- PROCEDURAL FALLBACK (used when PNG not found) ----
   ctx.save();
   ctx.globalAlpha = alpha ?? 1;
   ctx.translate(x, y);
@@ -952,6 +1013,19 @@ function drawAxolotlShape(x, y, size, color, dir, isKing, health, t, alpha) {
 // RENDERING – PREDATOR
 // ============================================================
 function drawPredator(ev, t) {
+  // ---- PNG SPRITE PATH (default) ----
+  if (SPRITE_READY.predator && SPRITES.predator) {
+    const info = SPRITE_INFO.predator;
+    ctx.save();
+    ctx.translate(ev.px, ev.py);
+    if (ev.pvx < 0) ctx.scale(-1, 1);
+    ctx.globalAlpha = 0.85;
+    ctx.drawImage(SPRITES.predator, -info.ax, -info.ay, info.w, info.h);
+    ctx.restore();
+    return;
+  }
+
+  // ---- PROCEDURAL FALLBACK ----
   ctx.save();
   ctx.translate(ev.px, ev.py);
   // Flip based on movement dir
@@ -1253,6 +1327,7 @@ window.resumeGame = resumeGame;
 
 // Show start screen on load
 window.addEventListener('load', () => {
+  loadSprites();
   showScreen('menuScreen');
   // Draw a still frame so canvas isn't empty behind the overlay
   ctx.fillStyle = '#0d2040';
