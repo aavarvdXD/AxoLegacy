@@ -9,11 +9,11 @@ const CANVAS_W = 800;
 const CANVAS_H = 600;
 
 // Day/Night cycle durations (seconds)
-const PHASE_DAY      = 180;  // 3:00
+const PHASE_DAY      = 180;  // 3 min
 const PHASE_SUNSET   =  30;  // 0:30
-const PHASE_NIGHT    = 120;  // 2:00
+const PHASE_NIGHT    = 120;  // 2 min
 const PHASE_SUNRISE  =  30;  // 0:30
-const CYCLE_DURATION = PHASE_DAY + PHASE_SUNSET + PHASE_NIGHT + PHASE_SUNRISE; // 360s
+const CYCLE_DURATION = PHASE_DAY + PHASE_SUNSET + PHASE_NIGHT + PHASE_SUNRISE; // 360 s total
 
 // Temperature (°C)
 const TEMP_DAY       = 25;
@@ -362,7 +362,7 @@ const EVENT_DEFINITIONS = [
           a.state       = 'FLEE';
           a.fleeFromX   = ev.px;
           a.fleeFromY   = ev.py;
-          a.followTimer = 0;
+          a.followTimer = 4; // flee for 4 seconds after spotting predator
         }
       });
 
@@ -601,7 +601,11 @@ function updateColony(dt) {
 
     if (axo.state === 'FLEE') {
       axo.followTimer -= dt;
-      if (axo.followTimer <= 0) axo.state = 'WANDER';
+      if (axo.followTimer <= 0) {
+        axo.state     = 'WANDER';
+        axo.fleeFromX = undefined;
+        axo.fleeFromY = undefined;
+      }
     } else if (axo.state === 'FOLLOW') {
       axo.followTimer -= dt;
       if (axo.followTimer <= 0 || dPlayer < 30) axo.state = 'WANDER';
@@ -1076,7 +1080,7 @@ function drawHUD() {
   // --- Colony Count ---
   ctx.fillStyle = '#fff';
   ctx.font      = 'bold 14px Segoe UI';
-  ctx.fillText(`🐟 Colony: ${colony.length} / ${COLONY_MAX}`, pad + 8, pad + 84);
+  ctx.fillText(`🐾 Colony: ${colony.length} / ${COLONY_MAX}`, pad + 8, pad + 84);
 
   // --- Player Health ---
   drawBar(pad + 6, pad + 96, barW, barH, player.health / 100, '#ff7eb3', '#4a1a2a', '👑', `${Math.round(player.health)}%`);
