@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AxoLegacy – Gills &amp; Generations</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="gameContainer">
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Event notification toast -->
+    <div id="eventToast"></div>
+
+    <!-- Overlay screens -->
+    <div id="overlay">
+
+      <!-- MAIN MENU -->
+      <div class="screen" id="menuScreen">
+        <div class="emoji-big">🌊👑</div>
+        <h1>AxoLegacy</h1>
+        <p style="color:#7ec8e3; font-size:1.05rem;"><em>Gills &amp; Generations</em></p>
+        <p>
+          You are the <strong>Axolotl King</strong> — not a god, but a leader
+          <em>inside</em> your colony. Guide your axolotls through the changing
+          lake, survive events, and grow your dynasty!
+        </p>
+
+        <div class="controls-grid">
+          <div><span>WASD / Arrows</span> Move</div>
+          <div><span>Space</span> Call colony</div>
+          <div><span>Esc</span> Pause</div>
+          <div><span>Goal</span> Maintain 20–26 °C &amp; O₂ &gt; 50%</div>
+        </div>
+
+        <p style="font-size:0.85rem; color:#7a9cb8;">
+          🌡️ Safe temp: 20–26 °C &nbsp;|&nbsp; 💧 Keep oxygen above 50 %<br>
+          🌙 Night is cooler &amp; more dangerous &nbsp;|&nbsp; ⚠️ Watch for events!
+        </p>
+
+        <button class="btn" onclick="startGame()">🐟 Begin Your Legacy</button>
+      </div>
+
+      <!-- PAUSE -->
+      <div class="screen" id="pauseScreen">
+        <div class="emoji-big">⏸️</div>
+        <h2>Paused</h2>
+        <p>Take a breath — your colony is waiting.</p>
+        <button class="btn" onclick="resumeGame()">▶ Resume</button>
+        <button class="btn" onclick="startGame()">↺ Restart</button>
+      </div>
+
+      <!-- GAME OVER -->
+      <div class="screen" id="gameOverScreen">
+        <div class="emoji-big">💀</div>
+        <h2>Legacy Ended</h2>
+        <p id="goReason" style="color:#ff8c8c;"></p>
+        <div id="scoreDisplay">
+          <p>Days survived: <span id="goCycles">0</span></p>
+          <p>Largest colony: <span id="goMaxColony">0</span></p>
+          <p>Axolotls lost: <span id="goLost">0</span></p>
+        </div>
+        <button class="btn" onclick="startGame()">↺ Try Again</button>
+      </div>
+
+    </div><!-- /overlay -->
+  </div><!-- /gameContainer -->
+
+  <script src="js/game.js"></script>
+</body>
+</html>
