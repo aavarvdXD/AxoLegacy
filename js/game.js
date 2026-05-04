@@ -459,7 +459,7 @@ function tryReproduce(dt) {
           life: 1.0,
         });
       }
-      stats.maxColony = Math.max(stats.maxColony, colony.length + 1);
+      stats.maxColony = Math.max(stats.maxColony, colony.length);
     }
   });
 }
@@ -681,6 +681,10 @@ function updateParticles(dt) {
   deadParticles  = deadParticles .filter(p => (p.life -= dt * 1.5) > 0);
   birthParticles = birthParticles.filter(p => (p.life -= dt)       > 0);
   bubbles        = bubbles        .filter(b => (b.y -= b.speed * dt) > -10);
+
+  // Move particles
+  deadParticles.forEach(p  => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 20 * dt; });
+  birthParticles.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; });
 
   // Emit new bubbles occasionally
   if (Math.random() < dt * 8) {
@@ -1174,7 +1178,6 @@ function loop(timestamp) {
   updatePlayer(dt);
   updateColony(dt);
   updateParticles(dt);
-  updateParticlePositions(dt);
 
   // RENDER
   ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
@@ -1200,10 +1203,6 @@ function loop(timestamp) {
   requestAnimationFrame(loop);
 }
 
-function updateParticlePositions(dt) {
-  deadParticles.forEach(p  => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 20 * dt; });
-  birthParticles.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; });
-}
 
 // ============================================================
 // UTILITIES
@@ -1247,7 +1246,6 @@ function roundRect(ctx, x, y, w, h, r) {
 // ============================================================
 window.startGame  = startGame;
 window.resumeGame = resumeGame;
-window.startGame  = startGame;
 
 // Show start screen on load
 window.addEventListener('load', () => {
